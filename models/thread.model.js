@@ -14,6 +14,11 @@ const threadSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
+    deleted: {
+        type: Boolean,
+        default: false
+    }
+    ,
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }]
 }, { timestamps: true });
