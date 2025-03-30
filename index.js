@@ -7,6 +7,8 @@ const authRouter = require('./routes/auth.route');
 const connectDB = require('./config/db');
 const app = express();
 
+const userRouter = require('./routes/user.route');
+
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -16,12 +18,13 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use('/', authRouter);
+app.use('/user', userRouter);
 
-
+//cai nay de test thoi nhe
 app.get('/profile', (req, res) => {
     if (!req.user) return res.redirect('/');
     res.send(`
@@ -31,7 +34,7 @@ app.get('/profile', (req, res) => {
         <a href="/logout">Logout</a>
     `);
 });
-
+//cai nay cung test
 app.get('/', (req, res) => {
     res.send(`
         <h1>Login Demo</h1>

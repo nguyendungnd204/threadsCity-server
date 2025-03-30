@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const followSchema = new mongoose.Schema({
     followerId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -11,4 +13,4 @@ const followSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-export const Follow = mongoose.model('Follow', followSchema);
+module.exports = mongoose.model("Follow", followSchema);

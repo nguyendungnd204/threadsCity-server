@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const threadSchema = new mongoose.Schema({
     authorId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -16,4 +18,4 @@ const threadSchema = new mongoose.Schema({
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }]
 }, { timestamps: true });
 
-export const Thread = mongoose.model('Thread', threadSchema);
+module.exports = mongoose.model("Thread", threadSchema);
