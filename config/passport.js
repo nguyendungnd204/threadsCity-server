@@ -14,7 +14,9 @@ passport.use('facebook', new FacebookStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET,
     callbackURL: process.env.FACEBOOK_CALLBACK_URL,
-    profileFields: ['id', 'displayName', 'emails', 'photos']
+    profileFields: ['id', 'displayName', 'emails', 'photos'],
+    scope: ['email', 'public_profile'],
+    enableProof: true
 }, authService.facebookAuthCallback));
 
 passport.serializeUser((user, done) => {
