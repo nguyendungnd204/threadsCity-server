@@ -8,6 +8,7 @@ const connectDB = require('./config/db');
 const app = express();
 
 const userRouter = require('./routes/user.route');
+const threadRouter = require('./routes/thread.route');
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/', authRouter);
 app.use('/user', userRouter);
+app.use('/thread', threadRouter);
 
 //cai nay de test thoi nhe
 app.get('/profile', (req, res) => {
