@@ -19,14 +19,14 @@ exports.googleAuthCallback = (req, res, next) => {
   passport.authenticate('google', { session: false }, (err, user, info) => {
     if (err || !user) {
       console.error('Google auth error:', err, info);
-      // Cố gắng redirect về trang lỗi của client nếu có thể
+
       const errorRedirectUri = req.session.redirectUri ? `${req.session.redirectUri}?error=AuthenticationFailed` : '/login?error=AuthenticationFailed';
       delete req.session.redirectUri; // Xóa khỏi session
       return res.redirect(errorRedirectUri); 
     }
     
     try {
-      // Tạo JWT token
+
       const token = jwt.sign(
         { id: user._id, email: user.email },
         process.env.JWT_SECRET || 'your-jwt-secret',
@@ -48,8 +48,7 @@ exports.googleAuthCallback = (req, res, next) => {
         
         return res.redirect(finalRedirectUrl);
       } else {
-        // Nếu không có redirect_uri, đây là trường hợp không mong muốn
-        // Có thể trả về lỗi hoặc một trang mặc định
+       
         console.error("Missing redirectUri in session during Google callback");
         return res.status(400).json({ success: false, message: "Missing redirect URI" });
       }
@@ -62,9 +61,8 @@ exports.googleAuthCallback = (req, res, next) => {
   })(req, res, next);
 };
 
-// Lưu trữ redirect_uri khi bắt đầu quá trình xác thực
 exports.facebookAuth = (req, res, next) => {
-  // Lưu redirect_uri vào session để sử dụng trong callback
+
   const redirectUri = req.query.redirect_uri;
   if (redirectUri) {
     req.session.redirectUri = redirectUri;
@@ -137,7 +135,3 @@ exports.logout = (req, res) => {
     res.json({ success: true });
   });
 };
-
-// Các hàm mobile login không cần thiết nữa nếu dùng WebBrowser
-// exports.mobileGoogleLogin = ...
-// exports.mobileFacebookLogin = ...
