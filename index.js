@@ -3,6 +3,7 @@ const express = require('express');
 require('./config/passport');
 const passport = require('passport'); 
 const session = require('express-session');
+const cors = require('cors');
 const authRouter = require('./routes/auth.route');
 const connectDB = require('./config/db');
 const app = express();
@@ -10,8 +11,25 @@ const app = express();
 const userRouter = require('./routes/user.route');
 const threadRouter = require('./routes/thread.route');
 
+// CORS middleware - đặt trước tất cả middleware khác
+app.use(cors({
+    origin: '*',  // Cho phép tất cả origin trong môi trường development
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+    optionsSuccessStatus: 204,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
+
+// Tạm thời đặt lại COOP để chẩn đoán
+app.use((req, res, next) => {
+    res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
+    // Có thể cần cả CEEP nếu có vấn đề liên quan đến embed
+    // res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp'); 
+    next();
+});
+
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || 'your-session-secret',
     resave: false,
     saveUninitialized: true,
     cookie: {secure: false}
@@ -26,26 +44,15 @@ app.use('/', authRouter);
 app.use('/user', userRouter);
 app.use('/thread', threadRouter);
 
-//cai nay de test thoi nhe
-app.get('/profile', (req, res) => {
-    if (!req.user) return res.redirect('/');
-    res.send(`
-        <h1>Welcome ${req.user.displayName}</h1>
-        ${req.user.photos?.[0]?.value ? `<img src="${req.user.photos[0].value}" width="100"/>` : ''}
-        <p>Email: ${req.user.email || 'No email'}</p>
-        <a href="/logout">Logout</a>
-    `);
-});
-//cai nay cung test
-app.get('/', (req, res) => {
-    res.send(`
-        <h1>Login Demo</h1>
-        <a href="/auth/google">Login with Google</a><br/>
-        <a href="/auth/facebook">Login with Facebook</a>
-    `);
+
+// Middleware xử lý lỗi
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
 });
 
-app.listen(3000, () => {
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
     connectDB();
-    console.log(`Server is running at port 3000`)
+    console.log(`Server is running at port ${PORT}`)
 });
